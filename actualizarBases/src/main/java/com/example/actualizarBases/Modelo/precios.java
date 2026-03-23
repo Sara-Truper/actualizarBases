@@ -52,8 +52,6 @@ public class precios {
 	public void setProveedor(String proveedor) {
 		this.proveedor = proveedor;
 	}
-	
-	
 	public BigDecimal getPrecio() {
 		return Precio;
 	}
