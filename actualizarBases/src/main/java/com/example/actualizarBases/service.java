@@ -60,8 +60,7 @@ public class service {
 		IOUtils.setByteArrayMaxOverride(200_000_000);
 		//\\cernotes\A_Apoyo Sistema\Lista Proveedores Dirección Importaciones.xlsx
 		String ruta="\\\\cernotes\\A_Apoyo Sistema\\Lista Proveedores Dirección Importaciones.xlsx";
-		File archivo = new File(ruta);
-		Workbook wb = WorkbookFactory.create((archivo));
+		Workbook wb = WorkbookFactory.create(new FileInputStream(ruta));
         Sheet sheet = wb.getSheetAt(0);
         proveedoresRepository.deleteAllInBatch();
         List<listaProveedores> listaProv = new ArrayList<>();
@@ -127,7 +126,7 @@ public class service {
 	public void actualizarDirectos() throws Exception {
 		IOUtils.setByteArrayMaxOverride(200_000_000);
 	    String ruta = "\\\\Cernotes\\SEGUIMIENTO ORDENES DE COMPRA IMPORTS\\PO directos.xlsx";
-	    Workbook wb = WorkbookFactory.create(new File(ruta));
+	    Workbook wb = WorkbookFactory.create(new FileInputStream(ruta));
 	    Sheet sheet = wb.getSheetAt(0);
 	    directosRepository.deleteAllInBatch();
 	    List<directos> listaDirectos = new ArrayList<>();
@@ -240,7 +239,8 @@ public class service {
 	@Transactional
 	public void actualizarContactos() throws Exception{
 		String ruta="\\\\cernotes\\A_Apoyo Sistema\\Listado de Contactos FR Importaciones-Planeación.xlsx";
-		Workbook wb = WorkbookFactory.create(new File(ruta));
+		Workbook wb = WorkbookFactory.create(new FileInputStream(ruta));
+
         Sheet sheetCompradores = wb.getSheet("Compradores");
         Sheet sheetPlaneadores= wb.getSheet("Planeadores");
         contactosRepository.deleteAllInBatch();
@@ -333,7 +333,7 @@ public class service {
 		for(int i=0; i<rutas.length; i++) {
 			String rutaActual=rutas[i];
 			int tipoArchivo=i+1;
-			Workbook wb = WorkbookFactory.create(new File(rutaActual));
+			Workbook wb = WorkbookFactory.create(new FileInputStream(rutaActual));
 		    Sheet sheet = wb.getSheetAt(0);
 		    List<codigos> listaCodigos= new ArrayList<>();
 		    //List<codigos> totalProcesados = new ArrayList<>();
