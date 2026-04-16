@@ -1,5 +1,6 @@
 package com.example.actualizarBases;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -59,7 +60,8 @@ public class service {
 		IOUtils.setByteArrayMaxOverride(200_000_000);
 		//\\cernotes\A_Apoyo Sistema\Lista Proveedores Dirección Importaciones.xlsx
 		String ruta="\\\\cernotes\\A_Apoyo Sistema\\Lista Proveedores Dirección Importaciones.xlsx";
-		Workbook wb = WorkbookFactory.create(new FileInputStream(ruta));
+		File archivo = new File(ruta);
+		Workbook wb = WorkbookFactory.create((archivo));
         Sheet sheet = wb.getSheetAt(0);
         proveedoresRepository.deleteAllInBatch();
         List<listaProveedores> listaProv = new ArrayList<>();
@@ -125,7 +127,7 @@ public class service {
 	public void actualizarDirectos() throws Exception {
 		IOUtils.setByteArrayMaxOverride(200_000_000);
 	    String ruta = "\\\\Cernotes\\SEGUIMIENTO ORDENES DE COMPRA IMPORTS\\PO directos.xlsx";
-	    Workbook wb = WorkbookFactory.create(new FileInputStream(ruta));
+	    Workbook wb = WorkbookFactory.create(new File(ruta));
 	    Sheet sheet = wb.getSheetAt(0);
 	    directosRepository.deleteAllInBatch();
 	    List<directos> listaDirectos = new ArrayList<>();
@@ -182,27 +184,25 @@ public class service {
 	public void actualizarPool() throws Exception{
 		IOUtils.setByteArrayMaxOverride(200_000_000);
 		String ruta = "\\\\Cernotes\\Matrices de Precio\\6_Reportes de PIs\\Reporte de PI's pool de Matrices.xlsx";
-	    Workbook wb = WorkbookFactory.create(new FileInputStream(ruta));
+		File archivo = new File(ruta);
+		try(FileInputStream fis = new FileInputStream(archivo);
+		         BufferedInputStream bis = new BufferedInputStream(fis);
+		         Workbook wb = WorkbookFactory.create(bis)) {
 	    Sheet sheet = wb.getSheetAt(0);
 	    
 	    poolRepository.deleteAllInBatch();
 	    List<pool> listaPool = new ArrayList<>();
 	    
 	    for (int i = 3; i <= sheet.getLastRowNum(); i++) {
-	    	
-	    	 try {
+	        Row fila = sheet.getRow(i);
+	        if (fila == null) continue;
 
-	    	        Row fila = sheet.getRow(i);
-	    	        if (fila == null) {
-	    	            continue;
-	    	        }
+	        String valorF = getCellValue(fila.getCell(5));
+	        String valorK = getCellValue(fila.getCell(10));
 
-	    	        String valorF = getCellValue(fila.getCell(5));
-	    	        String valorK = getCellValue(fila.getCell(10));
-
-	    	        if (valorF.isEmpty() || valorK.isEmpty()) {
-	    	            continue;
-	    	        }
+	        if (valorF.isEmpty() || valorK.isEmpty()) {
+	            continue;
+	        }
 
 	        pool p = new pool();
 	        
@@ -224,11 +224,6 @@ public class service {
 	        p.setStatus_matriz_dias_transcurridos(getCellValue(fila.getCell(14)));
 	        
 	        listaPool.add(p);
-	        
-	    	 } catch (Exception e) {
-	    		 e.printStackTrace();
-	    	        continue;
-	    	 }
 	        if (listaPool.size() >= 500) {
 	            poolRepository.saveAll(listaPool);
 	            listaPool.clear();
@@ -236,15 +231,16 @@ public class service {
 	    }
 	    if (!listaPool.isEmpty()) {
 	        poolRepository.saveAll(listaPool);
+	    }} catch (Exception e) {
+	        throw new Exception("Error al leer el archivo en red: " + e.getMessage());
 	    }
-	    wb.close();
 	}
 	
 	//contactos
 	@Transactional
 	public void actualizarContactos() throws Exception{
 		String ruta="\\\\cernotes\\A_Apoyo Sistema\\Listado de Contactos FR Importaciones-Planeación.xlsx";
-		Workbook wb = WorkbookFactory.create(new FileInputStream(ruta));
+		Workbook wb = WorkbookFactory.create(new File(ruta));
         Sheet sheetCompradores = wb.getSheet("Compradores");
         Sheet sheetPlaneadores= wb.getSheet("Planeadores");
         contactosRepository.deleteAllInBatch();
@@ -337,7 +333,7 @@ public class service {
 		for(int i=0; i<rutas.length; i++) {
 			String rutaActual=rutas[i];
 			int tipoArchivo=i+1;
-			Workbook wb = WorkbookFactory.create(new FileInputStream(rutaActual));
+			Workbook wb = WorkbookFactory.create(new File(rutaActual));
 		    Sheet sheet = wb.getSheetAt(0);
 		    List<codigos> listaCodigos= new ArrayList<>();
 		    //List<codigos> totalProcesados = new ArrayList<>();

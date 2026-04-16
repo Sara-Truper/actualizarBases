@@ -42,7 +42,7 @@ public class Controller {
 	public ResponseEntity<Map<String, Object>> pool(){
 		Map<String, Object> respuesta = new HashMap<>();
         try {
-            mService.actualizarPool();
+            mService.actualizarPool(); 
             respuesta.put("message", "Tabla Pool actualizada con éxito");
             return ResponseEntity.ok(respuesta);
         } catch (Exception e) {
