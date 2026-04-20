@@ -131,6 +131,11 @@ public class service {
 	    directosRepository.deleteAllInBatch();
 	    List<directos> listaDirectos = new ArrayList<>();
 
+	    /*Row filaTitulos = sheet.getRow(1); 
+	    for (int c = 0; c < filaTitulos.getLastCellNum(); c++) {
+	        System.out.println("indice [" + c + "]: " + getCellValue(filaTitulos.getCell(c)));
+	    }*/
+	    
 	    for (int i = 2; i <= sheet.getLastRowNum(); i++) {
 	        Row fila = sheet.getRow(i);
 	        if (fila == null || getCellValue(fila.getCell(0)).isEmpty()) break;
@@ -144,28 +149,27 @@ public class service {
 	        d.setFamilia(getCellValue(fila.getCell(4)));
 	        d.setCe(getCellValue(fila.getCell(5)));
 	        d.setDailymrpsale(getFloat(fila.getCell(6)));
-	        d.setTotal_disponible_pcs(getInt(fila.getCell(7)));
-	        d.setTotal_disponible_days(getInt(fila.getCell(8)));
-	        d.setPo_pm(getInt(fila.getCell(9)));
-	        d.setPo_th(getInt(fila.getCell(10)));
-	        d.setFull_consol(getCellValue(fila.getCell(11)));
-	        d.setStatus_confirmacion(getCellValue(fila.getCell(12)));
+	        d.setTotal_disponible_pcs(getInt(fila.getCell(13)));
+	        d.setTotal_disponible_days(getInt(fila.getCell(14)));
+	        d.setPo_pm(getInt(fila.getCell(15)));
+	        d.setPo_th(getInt(fila.getCell(16)));
+	        d.setFull_consol(getCellValue(fila.getCell(18)));
+	        d.setStatus_confirmacion(getCellValue(fila.getCell(19)));
 
 	        // Fechas
-	        d.setOpen_purchase_ordersetd(getDate(fila.getCell(13)));
-	        d.setOpen_purchase_orderseta(getDate(fila.getCell(14)));
-	        d.setPo_qty(getInt(fila.getCell(15)));
-	        d.setPo_days(getInt(fila.getCell(16)));
-	        d.setSs_days(getInt(fila.getCell(17)));
-	        d.setIda(getInt(fila.getCell(18)));
-	        d.setOver_stock(getFloat(fila.getCell(20)));
-	        d.setAlt_vendor(getCellValue(fila.getCell(21)));
-	        d.setContenedor(getCellValue(fila.getCell(22)));
-	        d.setFactura(getCellValue(fila.getCell(23)));
-	        d.setSar2(getCellValue(fila.getCell(24)));
-	        d.setDirecto(getCellValue(fila.getCell(25)));
-	        d.setPod(getCellValue(fila.getCell(26)));
-
+	        d.setOpen_purchase_ordersetd(getDate(fila.getCell(20)));
+	        d.setOpen_purchase_orderseta(getDate(fila.getCell(21)));
+	        d.setPo_qty(getInt(fila.getCell(24)));
+	        d.setPo_days(getInt(fila.getCell(27)));
+	        d.setSs_days(getInt(fila.getCell(28)));
+	        d.setIda(getInt(fila.getCell(29)));
+	        d.setOver_stock(getFloat(fila.getCell(36)));
+	        d.setAlt_vendor(getCellValue(fila.getCell(38)));
+	        d.setContenedor(getCellValue(fila.getCell(39)));
+	        d.setFactura(getCellValue(fila.getCell(40)));
+	        d.setSar2(getCellValue(fila.getCell(41)));
+	        d.setDirecto(getCellValue(fila.getCell(42)));
+	        d.setPod(getCellValue(fila.getCell(43)));
 	        listaDirectos.add(d);
 
 	        if (listaDirectos.size() >= 500) {
@@ -330,6 +334,7 @@ public class service {
 		
 		String rutas[]={"\\\\cernotes\\A_Apoyo Sistema\\Lista Codigos Direccion Importaciones.xls",
 				"\\\\cernotes\\A_Apoyo Sistema\\Listado Codigos Refacciones.xlsm"};
+		
 		for(int i=0; i<rutas.length; i++) {
 			String rutaActual=rutas[i];
 			int tipoArchivo=i+1;
@@ -396,7 +401,7 @@ public class service {
 	    for (int listado = 0; listado < nombresBase.length; listado++) {
 	        String nom = nombresBase[listado];
 	        File archivo = null;
-	        for (int d = 0; d < 10; d++) {
+	        for (int d = 0; d < 15; d++) {
 	            String fecha = java.time.LocalDate.now().minusDays(d).format(java.time.format.DateTimeFormatter.ofPattern("ddMMyyyy"));
 	            String rutaCompleta = "\\\\Isilon2truperdata\\Importaciones\\SAP\\" + nom + fecha + ".xlsx";
 	            File archivoO = new File(rutaCompleta);
@@ -405,9 +410,9 @@ public class service {
 	                break;
 	            }
 	        }
-
-	        try (InputStream is = new FileInputStream(archivo);
-	             Workbook wb = WorkbookFactory.create(is)) {
+	            try (FileInputStream fis = new FileInputStream(archivo);
+	                    BufferedInputStream bis = new BufferedInputStream(fis);
+	                    Workbook wb = WorkbookFactory.create(bis)) {
 	            Sheet sheet = wb.getSheetAt(0);
 	            List<precios> listaPrecios = new ArrayList<>();
 	                
